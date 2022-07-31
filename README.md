@@ -14,8 +14,14 @@ Notes:
 Google Data: 
 https://drive.google.com/file/d/1964WTq3vBW4Ff1ypMXlbxUtdMyfVquf4/view?usp=sharing
 
+Wikipedia Data: 
+https://drive.google.com/file/d/110BwNoMIfc5SED2tKfIMYWw-QuFqSIuD/view?usp=sharing
+
 IMDb Data (from the IMDb-Wiki dataset): 
 https://drive.google.com/file/d/1lqPIqPewVpgFSqHUVFsajSDn7aTCL65u/view?usp=sharing
+
+Wiki Data (from the IMDb-Wiki dataset): 
+https://drive.google.com/file/d/1XKy06HfHGF0lRvCp8lOkME93Sn9KoT6d/view?usp=sharing
 
 1.1. The data associated with the IMDb-Wiki Dataset ("imdb_age_celeb.csv" and "wiki_age_celeb.csv") is from the following paper: 
 
