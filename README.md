@@ -8,7 +8,7 @@ This git contains:
 
 -The raw data for all experiments
 
-Notes: 
+Notes: </br>
 1.0. Several datasets used in this study are too large to upload as a csv to this git repository, so they can be accessed and downloaded at the following google drive links: 
 
 Google Data: 
