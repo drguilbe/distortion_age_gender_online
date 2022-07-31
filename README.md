@@ -3,7 +3,9 @@
 This github contains all of the replication materials for Guilbeault & Delecourt, 2022, "Women are Depicted as Significantly Younger than Men in over One Million Images from Google, Wikipedia, and IMDb"
 
 This git contains: 
+
 -An r script for replicating all main and supplementary analyses from the raw data. 
+
 -The raw data for all experiments
 
 Notes: 
@@ -24,4 +26,4 @@ Chen, Bor-Chun, Chu-Song Chen, and Winston H. Hsu. “Cross-Age Reference Coding
 
 Srinivasan, Krishna, Karthik Raman, Jiecao Chen, Michael Bendersky, and Marc Najork. “WIT: Wikipedia-Based Image Text Dataset for Multimodal Multilingual Machine Learning.” In Proceedings of the 44th International ACM SIGIR Conference on Research and Development in Information Retrieval, 2443–49. New York, NY, USA: Association for Computing Machinery, 2021. https://doi.org/10.1145/3404835.3463257.
 
-The WIT data did not originally contain the age and gender classifications. Our dataset includes the gender, age, and social category assignments for images from this data, which we collected using human crowdsourcing. 
+The WIT data did not originally contain the age and gender classifications. Our dataset includes the gender, age, and social category classifications for images from this data, which we collected using human crowdsourcing. 
