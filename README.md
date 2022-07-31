@@ -9,10 +9,13 @@ This git contains:
 -The raw data for all experiments
 
 Notes: 
-1.0. The raw data associated with the novel Google images collected for this study is too large to upload as a csv to this git repository. For this reason, it can be accessed and downloaded at the following google drive link: 
+1.0. Several datasets used in this study are too large to upload as a csv to this git repository, so they can be accessed and downloaded at the following google drive links: 
 
-Main Google Data: 
+Google Data: 
 https://drive.google.com/file/d/1964WTq3vBW4Ff1ypMXlbxUtdMyfVquf4/view?usp=sharing
+
+IMDb Data (from the IMDb-Wiki dataset): 
+https://drive.google.com/file/d/1lqPIqPewVpgFSqHUVFsajSDn7aTCL65u/view?usp=sharing
 
 1.1. The data associated with the IMDb-Wiki Dataset ("imdb_age_celeb.csv" and "wiki_age_celeb.csv") is from the following paper: 
 
