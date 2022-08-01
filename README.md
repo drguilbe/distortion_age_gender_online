@@ -19,7 +19,6 @@ IMDb Data (from the IMDb-Wiki dataset):
 https://drive.google.com/file/d/1lqPIqPewVpgFSqHUVFsajSDn7aTCL65u/view?usp=sharing <br>
 Wiki Data (from the IMDb-Wiki dataset): 
 https://drive.google.com/file/d/1XKy06HfHGF0lRvCp8lOkME93Sn9KoT6d/view?usp=sharing <br>
-<br>
 Data from our Supplementary Coder Validation Task: 
 https://drive.google.com/file/d/1ccdfUQFm6geZrDkhIqURMZDl2M7Th8l4/view?usp=sharing <br>
 <br>
