@@ -20,6 +20,9 @@ https://drive.google.com/file/d/1lqPIqPewVpgFSqHUVFsajSDn7aTCL65u/view?usp=shari
 Wiki Data (from the IMDb-Wiki dataset): 
 https://drive.google.com/file/d/1XKy06HfHGF0lRvCp8lOkME93Sn9KoT6d/view?usp=sharing <br>
 <br>
+Data from our Supplementary Coder Validation Task: 
+https://drive.google.com/file/d/1ccdfUQFm6geZrDkhIqURMZDl2M7Th8l4/view?usp=sharing <br>
+<br>
 _1.1. The data associated with the IMDb-Wiki Dataset ("IMDb_celeb_data.csv" and "Wiki_celeb_data.csv") is from the following paper:_ <br>
 <br>
 Rothe, Rasmus, Radu Timofte, and Luc Van Gool. “Deep Expectation of Real and Apparent Age from a Single Image Without Facial Landmarks.” International Journal of Computer Vision 126, no. 2 (April 1, 2018): 144–57. https://doi.org/10.1007/s11263-016-0940-3.
