@@ -1,6 +1,5 @@
-#Replication Script for "Women are Depicted as Significantly Younger than Men in over One Million Images from Google, Wikipedia, and IMDb" 
-#October 2022
-#Douglas R. Guilbeault & Solene Delecourt
+#Replication Script for "Women are Depicted as Significantly Younger than Men in over One Million Images from Google, Wikipedia, and IMDb", 2022
+#Douglas R. Guilbeault & Solene Delecour
 #Haas School of Business
 #University of California, Berkeley
 
