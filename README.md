@@ -1,6 +1,6 @@
 # genderedageism
 
-This github contains all of the replication materials for Guilbeault & Delecourt, 2022, "Women are Depicted as Significantly Younger than Men in over One Million Images from Google, Wikipedia, and IMDb"
+This github contains all of the replication materials for Guilbeault & Delecourt, 2022, "Age-based Gender Inequality in over One Million Images from Google, Wikipedia, and IMDb"
 
 This git contains: <br>
 -An r script for replicating all main and supplementary analyses from the raw data. <br>
@@ -11,16 +11,16 @@ Notes:
 
 _1.0. Several datasets used in this study are too large to upload as a csv to this git repository, so they can be accessed and downloaded at the following google drive links:_ <br>
 
-Google Data: 
-https://drive.google.com/file/d/1F4AvaG5Iu1jEdpYEgwY9ROon106-XhJL/view?usp=sharing <br>
-Wikipedia Data: 
-https://drive.google.com/file/d/110BwNoMIfc5SED2tKfIMYWw-QuFqSIuD/view?usp=sharing <br>
+Main Data (Google Wikipedia): 
+<br>
+IP Replication Data: 
+<br>
 IMDb Data (from the IMDb-Wiki dataset): 
 https://drive.google.com/file/d/1lqPIqPewVpgFSqHUVFsajSDn7aTCL65u/view?usp=sharing <br>
 Wiki Data (from the IMDb-Wiki dataset): 
 https://drive.google.com/file/d/1XKy06HfHGF0lRvCp8lOkME93Sn9KoT6d/view?usp=sharing <br>
 Data from our Supplementary Coder Validation Task: 
-https://drive.google.com/file/d/12LisdZs9ICHgV0iRWysSgKVU5-gdUcYK/view?usp=sharing <br>
+ <br>
 <br>
 _1.1. The data associated with the IMDb-Wiki Dataset ("IMDb_celeb_data.csv" and "Wiki_celeb_data.csv") is from the following paper:_ <br>
 <br>
