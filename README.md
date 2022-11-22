@@ -20,7 +20,7 @@ https://drive.google.com/file/d/1UzCdTNr5bXff7o0Gwaq1V0WI81Qih77n/view?usp=shari
 Wiki Data (from the IMDb-Wiki dataset): 
 https://drive.google.com/file/d/1EqlRkyLsCW86DaR3U5MA3dcwqM5LODxH/view?usp=sharing <br>
 Google Data (From the Cross-age Celebrity Dataset): https://drive.google.com/file/d/12wnyeb2Gj8BqHlsYVXw_IOp9CjQ95qjY/view?usp=sharing <br>
-Google Trends Search Frequency: https://drive.google.com/file/d/15u4lZ3oB7qXExwk-5I2n305G-IUGfBX2/view?usp=sharing <br>
+Google Trends Search Frequency Data: https://drive.google.com/file/d/15u4lZ3oB7qXExwk-5I2n305G-IUGfBX2/view?usp=sharing <br>
  <br>
 <br>
 _1.1. The data associated with the IMDb-Wiki Dataset is from the following paper:_ <br>
