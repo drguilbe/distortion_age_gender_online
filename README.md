@@ -11,7 +11,7 @@ Notes:
 
 _1.0. The datasets used in this study are too large to upload as a csv to this git repository, so they can be accessed and downloaded at the following google drive links (you will need to update the filepaths in the replication r script so that it downloads data from your local computer): <br>
 
-Main Data (Google & Wikipedia): https://drive.google.com/file/d/1PCV1udQXP-_2VuarqkLc-i-ukwHa5sM9/view?usp=sharing<br>
+Main Data (Google & Wikipedia): https://drive.google.com/file/d/1DlS5Qtq9OXOCnRLu5HWEiANmyqFYfhxx/view?usp=sharing<br>
 IP Replication Data (Google): https://drive.google.com/file/d/1O8Zh8HP9urwnSAzWHXiXVQ1oF6JhH9pN/view?usp=sharing <br>
 Supplementary Validation Task Data: https://drive.google.com/file/d/12hJxTtMcA9fJix8lBZGWB4xBM7_-BiJR/view?usp=sharing <br>
 Uncropped Data (Google): https://drive.google.com/file/d/1YDUqeuCbhgnM9zCWl9oWak8KYEThLbbg/view?usp=sharing <br>
