@@ -172,9 +172,6 @@ ggplot(google_gendered_agg, aes(x = Img.Age.Avg, fill=Img.Gender.Mode, color=Img
 t.test(subset(google_gendered_agg, Img.Gender.Mode=="Female")$Img.Age.Avg, 
        subset(google_gendered_agg, Img.Gender.Mode=="Male")$Img.Age.Avg)
 
-t.test(google_gendered_agg_cat_match$fem.age.avg, 
-       google_gendered_agg_cat_match$mal.age.avg,paired=T)
-
 google_gendered_agg_cat_match<-google_gendered_agg %>% group_by(Social.Category) %>%
   dplyr::summarise(fem.age.avg=mean(Img.Age.Avg[Img.Gender.Mode=="Female"],na.rm=T),
                    fem.freq = length(Img.Age.Avg[Img.Gender.Mode=="Female"]), 
@@ -183,16 +180,11 @@ google_gendered_agg_cat_match<-google_gendered_agg %>% group_by(Social.Category)
 
 google_gendered_agg_cat_match<-google_gendered_agg_cat_match[complete.cases(google_gendered_agg_cat_match),]
 
+t.test(google_gendered_agg_cat_match$fem.age.avg, 
+       google_gendered_agg_cat_match$mal.age.avg,paired=T)
+
 length(unique(google_gendered$face_id))
 length(unique(google_gendered_agg_cat_match$Social.Category))
-
-google_gendered_match_fem<-google_gendered_agg_cat_match %>% select(Social.Category, fem.age.avg)
-colnames(google_gendered_match_fem)[2]<-"age"
-google_gendered_match_fem$gender<-"Female"
-google_gendered_match_male<-google_gendered_agg_cat_match %>% select(Social.Category, mal.age.avg)
-colnames(google_gendered_match_male)[2]<-"age"
-google_gendered_match_male$gender<-"Male"
-google_gendered_match<-rbind(google_gendered_match_fem, google_gendered_match_male)
 
 #Fig. 1C#
 wiki_main_agg<-subset(data_main_agg, Data.Source=="Wikipedia")
@@ -246,11 +238,6 @@ IP_simp<-subset(IP_data, Img.Gender %in% c("Male", "Female"))
 IP_data_clean<-subset(IP_data, Attention.Check & Img.Gender %in% c("Male","Female") & humface=="Yes")
 
 IP_avg<-IP_data_clean %>% group_by(IP, Img.Gender) %>% 
-  dplyr::summarise(avg_age=mean(Img.Age, na.rm=T), 
-                   mode_age=getmode(Img.Age), 
-                   median_age=getmode(Img.Age))
-
-IP_data_clean %>% group_by(IP, Img.Gender) %>% 
   dplyr::summarise(avg_age=mean(Img.Age, na.rm=T), 
                    mode_age=getmode(Img.Age), 
                    median_age=getmode(Img.Age))
@@ -539,7 +526,8 @@ ggplot(CADC_comp, aes(x = age, fill=gender, alpha=gender, linetype=gender)) +
   geom_vline(xintercept = mean(subset(CADC_comp, gender=="Male")$age, na.rm=T), color="blue", size=4, alpha=0.8)
 
 #Fig. 3C Stats#
-t.test(subset(CADC_comp, gender=="Male")$age,subset(CADC_comp, gender=="Female")$age)
+t.test(subset(CADC_comp, gender=="Female")$age, 
+       subset(CADC_comp, gender=="Male")$age)
 
 ########################
 #Supplementary Analyses#
@@ -587,7 +575,6 @@ coeftest(mod_catFEs, mod_catFEs_vcov)
 
 mod_demo<-lm(Img.Age ~ Img.Gender + Data.Source + coder_gender + coder_age + coder_race + 
                coder_ideo + coder_inc + Social.Category, data = data_main)
-
 summary(mod_demo)
 mod_demo_vcov <- cluster.vcov(mod_demo, data_main$image_id)
 coeftest(mod_demo, mod_demo_vcov)
