@@ -1,10 +1,10 @@
 # genderedageism
 
-This github contains all of the replication materials for Guilbeault & Delecourt, 2022, "Age-based Gender Inequality in over One Million Images from Google, Wikipedia, and IMDb"
+This github contains all of the replication materials for Guilbeault, Delecourt, and Desikan 2024, "The Invisibility of Older Women Online"
 
 This git contains: <br>
--An r script for replicating all main and supplementary analyses from the raw data. <br>
--The raw data for all experiments<br>
+-R scripts for replicating all main and supplementary analyses from the raw data. The name of the R script and header text in the script specify which analyses it replicates from the manuscript and SI. <br>
+-The raw data for all observational analyses and experiments<br>
 
 Notes: 
 <br>
