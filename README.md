@@ -1,4 +1,4 @@
-# genderedageism
+# The Invisibility of Older Women Online
 
 This github contains all of the replication materials for Guilbeault, Delecourt, and Desikan 2024, "The Invisibility of Older Women Online"
 
