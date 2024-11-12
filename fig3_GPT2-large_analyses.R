@@ -4,23 +4,13 @@ library(ggplot2)
 library(tidyverse)
 
 #Functions#
-min_max_norm <- function(x, min_x, max_x){
-  norm_x = (x - max_x)/(min_x - max_x)
-  return(norm_x)
-}
+min_max_norm<-function(x){(x - min(x,na.rm=T))/(max(x,na.rm=T) - min(x,na.rm=T))}
 
 dt<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/Nature_Submit/GPT2-large-dimensions.csv")
 
 cor.test(dt$Age.Score, dt$Gender.Score)
-
-min_gender<-min(dt$Gender.Score * -1)
-max_gender<-max(dt$Gender.Score * -1)
-dt$gender_norm<-sapply(1:nrow(dt), function(x) min_max_norm(dt[x,]$Gender.Score * -1, min_gender, max_gender))
-
-min_age<-min(dt$Age.Score * -1)
-max_age<-max(dt$Age.Score * -1)
-dt$age_norm<-sapply(1:nrow(dt), function(x) min_max_norm(dt[x,]$Age.Score * -1, min_age, max_age))
-
+dt$gender_norm<-min_max_norm(dt$Gender.Score)
+dt$age_norm<-min_max_norm(dt$Age.Score)
 cor.test(dt$age_norm, dt$gender_norm)
 
 dt<-dt %>% mutate(gender_norm_rank = rank(-gender_norm), age_norm_rank = rank(-age_norm))
