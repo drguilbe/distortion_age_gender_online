@@ -57,7 +57,7 @@ dt_main<-rbind(treatment, control)
 savepath = ""
 
 #########
-#Fig. 2A#
+#Fig. 3A#
 #########
 
 #pdf(file = paste0(savepath, 'main_diff_final.pdf'), width = 11, height = 9.8, useDingbats = FALSE)
@@ -92,7 +92,7 @@ t.test(subset(treatment_full_main, gender == "Female")$age_cent, subset(treatmen
 t.test(subset(treatment_full_main, gender == "Female")$age_ideal_cent, subset(treatment_full_main, gender == "Male")$age_ideal_cent)
 
 ########
-#FIG 2B#
+#FIG 3B#
 ########
 dt_main$gender<-as.factor(dt_main$gender)
 dt_main$gender <- relevel(dt_main$gender, ref = 3)
@@ -137,7 +137,7 @@ ggplot(emm_interaction_df, aes(x = condition, y = emmean, color = gender, group 
 #dev.off()
 
 #########
-#FIG. 2C#
+#FIG. 3C#
 #########
 
 #Load other experimental data (from Guilbeault et al. 2024 in Nature, "Online Images Amplify Gender Bias")
@@ -235,35 +235,35 @@ t.test(subset(dt_full, Subj.Gender=="Female")$Subj.Age, subset(dt_full, Subj.Gen
 dt_full$gender_cond<-as.character(dt_full$gender_cond)
 dt_demo_comp<-subset(dt_full, !gender_cond %in% c("Not Sure"))
 
-tableS7<-lm(age ~ gender_cond + category + Subj.Age + Subj.Gender, data = dt_demo_comp)
+tableS19<-lm(age ~ gender_cond + category + Subj.Age + Subj.Gender, data = dt_demo_comp)
 summary(mod)
 
-tableS7_tbl <- tbl_regression(tableS7, pvalue_fun = ~format(.x, scientific = TRUE)) %>% 
+tableS19_tbl <- tbl_regression(tableS19, pvalue_fun = ~format(.x, scientific = TRUE)) %>% 
   modify_header(label = "**Variables**") %>% 
   add_glance_table(
     include = c(statistic, r.squared, adj.r.squared, nobs, df, AIC, df.residual, sigma) #everything()
   )
 
-as_flex_table(tableS7_tbl) %>% flextable::save_as_docx(path = paste(savepath, "tableS7.docx", sep=""))
+as_flex_table(tableS19_tbl) %>% flextable::save_as_docx(path = paste(savepath, "tableS19.docx", sep=""))
 
 dt_demo_comp_img<-subset(dt_demo_comp, gender_cond != "control")
 dt_demo_comp_img$demo_match_img<-dt_demo_comp_img$Subj.Gender == dt_demo_comp_img$gender
 dt_demo_comp_img$Age.Diff<-abs(dt_demo_comp_img$Subj.Age - dt_demo_comp_img$age)
 
-tableS8<-lm(age ~ gender_cond + category + demo_match_img + Age.Diff, data = dt_demo_comp_img)
-summary(tableS8)
+tableS20<-lm(age ~ gender_cond + category + demo_match_img + Age.Diff, data = dt_demo_comp_img)
+summary(tableS20)
 
-tableS8_tbl <- tbl_regression(tableS8, pvalue_fun = ~format(.x, scientific = TRUE)) %>% 
+tableS20_tbl <- tbl_regression(tableS20, pvalue_fun = ~format(.x, scientific = TRUE)) %>% 
   modify_header(label = "**Variables**") %>% 
   add_glance_table(
     include = c(statistic, r.squared, adj.r.squared, nobs, df, AIC, df.residual, sigma) #everything()
   )
 
-as_flex_table(tableS8_tbl) %>% flextable::save_as_docx(path = paste(savepath, "tableS8.docx", sep=""))
+as_flex_table(tableS20_tbl) %>% flextable::save_as_docx(path = paste(savepath, "tableS20.docx", sep=""))
 
-#########
-#FIG. S8#
-#########
+##########
+#FIG. S17#
+##########
 ggplot(hireability_comp_fig, aes(x=gender, y=ideal_age, color=measure, fill=measure))+
   geom_point(size=8, alpha=0.4) + 
   geom_smooth(linewidth=3, method='lm', formula= y~x, se=F) + 
@@ -287,9 +287,9 @@ ggplot(hireability_comp_fig, aes(x=gender, y=ideal_age, color=measure, fill=meas
   scale_x_continuous(limits = c(-1.05,1.05)) + 
   guides(color = guide_legend(nrow = 3, byrow = TRUE), fill = guide_legend(nrow = 3, byrow = TRUE))
 
-#########
-#FIG. S9#
-#########
+##########
+#FIG. S18#
+##########
 hire_likert<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/hire_likert.csv")
 treatment_likert<-merge(treatment, hire_likert, by=c("subj", "category"))
 treatment_likert<-subset(treatment_likert, gender != "Not Sure")
@@ -340,29 +340,29 @@ census_map_full_long$subj<-as.factor(census_map_full$subj)
 ##########
 cor.test(census_map_full_long$age, census_map_full_long$Census_age)
 
-tableS9<-lm(Census_age ~ age + Census_year + subj, data = census_map_full_long)
-summary(tableS9)
+tableS21<-lm(Census_age ~ age + Census_year + subj, data = census_map_full_long)
+summary(tableS21)
 
-tableS9_tbl <- tbl_regression(tableS9, pvalue_fun = ~format(.x, scientific = TRUE)) %>% 
+tableS21_tbl <- tbl_regression(tableS21, pvalue_fun = ~format(.x, scientific = TRUE)) %>% 
   modify_header(label = "**Variables**") %>% 
   add_glance_table(
     include = c(statistic, r.squared, adj.r.squared, nobs, df, AIC, df.residual, sigma) #everything()
   ) 
 
-as_flex_table(tableS9_tbl) %>% flextable::save_as_docx(path = paste(savepath, "tableS9.docx", sep=""))
+as_flex_table(tableS21_tbl) %>% flextable::save_as_docx(path = paste(savepath, "tableS21.docx", sep=""))
 
 #ideal hiring age
 cor.test(census_map_full_long$ideal_age, census_map_full_long$Census_age)
 
-tableS10<-lm(Census_age ~ ideal_age + Census_year + subj, data = census_map_full_long)
-summary(tableS10)
+tableS22<-lm(Census_age ~ ideal_age + Census_year + subj, data = census_map_full_long)
+summary(tableS22)
 
-tableS10_tbl <- tbl_regression(tableS10, pvalue_fun = ~format(.x, scientific = TRUE)) %>% 
+tableS22_tbl <- tbl_regression(tableS22, pvalue_fun = ~format(.x, scientific = TRUE)) %>% 
   modify_header(label = "**Variables**") %>% 
   add_glance_table(
     include = c(statistic, r.squared, adj.r.squared, nobs, df, AIC, df.residual, sigma) #everything()
   ) 
 
-as_flex_table(tableS10_tbl) %>% flextable::save_as_docx(path = paste(savepath, "tableS10.docx", sep=""))
+as_flex_table(tableS22_tbl) %>% flextable::save_as_docx(path = paste(savepath, "tableS22.docx", sep=""))
 
 
