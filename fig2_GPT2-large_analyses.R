@@ -65,7 +65,6 @@ ggplot(dt_m, aes(x = gender_norm, y = age_norm, fill=class, size=class, alpha=cl
   geom_smooth(method = "lm", formula = y ~ x, se = FALSE, aes(fill = NULL, size = NULL, alpha = NULL), 
               linewidth = 1, color="red", data = dt)
 
-#ggsave("fig3_gpt2-large.png", width=12, height=12, path = savepath)
 
 
 
