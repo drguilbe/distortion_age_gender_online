@@ -1,6 +1,6 @@
-# The Invisibility of Older Women Online
+# Mass Distortion of Age and Gender in Online Media and Artificial Intelligence
 
-This github contains all of the replication materials for Guilbeault, Delecourt, and Desikan 2024, "The Invisibility of Older Women Online"
+This github contains all of the replication materials for Guilbeault, Delecourt, and Desikan 2025, "Mass Distortion of Age and Gender in Online Media and Artificial Intelligence"
 
 This git contains: <br>
 -R scripts for replicating all main and supplementary analyses from the raw data. The name of the R script and header text in the script specify which analyses it replicates from the manuscript and SI. <br>
