@@ -365,4 +365,33 @@ tableS22_tbl <- tbl_regression(tableS22, pvalue_fun = ~format(.x, scientific = T
 
 as_flex_table(tableS22_tbl) %>% flextable::save_as_docx(path = paste(savepath, "tableS22.docx", sep=""))
 
+###########
+#Table S23#
+###########
+dt_main_binary<-subset(dt_main, gender != "Not Sure")
+dt_main_binary$age<-as.numeric(dt_main_binary$age)
+dt_main_binary$ideal_age<-as.numeric(dt_main_binary$ideal_age)
+
+img_ext<-subset(dt_main_binary, condition=="Image")
+cntrol_ext<-subset(dt_main_binary, condition!="Image")
+
+cntrol_ext_agg<-cntrol_ext %>% group_by(category) %>% 
+  dplyr::summarise(ideal_age = mean(ideal_age, na.rm=T), 
+                   gender_mean = mean(gender_num))
+
+cntrol_ext_agg$male_category<-cntrol_ext_agg$gender_mean>0
+
+img_ext_full<-merge(img_ext[,!colnames(img_ext) %in% c("ideal_age")], cntrol_ext_agg, by=c("category"))
+img_ext_full$age_ideal_gap<-abs(img_ext_full$age - img_ext_full$ideal_age)
+
+table_S23<-lm(age_ideal_gap ~ gender + male_category + subj + category, data = img_ext_full)
+summary(table_S23)
+
+table_S23_tbl <- tbl_regression(table_S23, pvalue_fun = ~format(.x, scientific = TRUE), 
+                              include=c("gender", "male_category")) %>% 
+  modify_header(label = "**Variables**") %>% 
+  add_glance_table(
+    include = c(statistic, r.squared, adj.r.squared, nobs, df, AIC, df.residual, sigma) #everything()
+  ) 
+
 
