@@ -5,10 +5,16 @@ library(lmtest); library(sandwich); library(gtsummary)
 library(flextable)
 theme_set(theme_sjplot())
 
+
+datapath<-"" #set path to where data is saved
+savepath<-"" #set path to where you want to save the figures 
+windows()
+
+
 ########################
 #Extended Data Figure 1#
 ########################
-medage_by_perc_women<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/full_perc_women_age.csv")
+medage_by_perc_women<-read.csv(paste(datapath, "full_perc_women_age.csv", sep=""))
 colnames(medage_by_perc_women)<-c("Occupation", "Total", "Women", "Age", "Census.Year")
 medage_by_perc_women$Women<-as.numeric(medage_by_perc_women$Women)
 medage_by_perc_women$Age<-as.numeric(medage_by_perc_women$Age)
@@ -21,11 +27,8 @@ tableS1_clust_se <- vcovCL(tableS1, cluster = ~ Occupation)
 coeftest(tableS1, vcov = tableS1_clust_se)
 confint(coeftest(tableS1, vcov = tableS1_clust_se))
 
-ggplot(subset(medage_by_perc_women, Census.Year == "2012"),  
-       aes(x = Women, y = Age)) + theme_bw() +
-  geom_point(size =3) + 
-  geom_smooth(method='lm', formula= y~x) + 
-  ggtitle("2012") + 
+ggplot(subset(medage_by_perc_women, Census.Year == "2012"), aes(x = Women, y = Age)) + theme_bw() +
+  geom_point(size =3) + geom_smooth(method='lm', formula= y~x) + ggtitle("2012") + 
   xlab("% Women in Occupation") + ylab("Median Age") + theme(
     axis.title.x=element_text(size=35),
     axis.title.y=element_text(size=35),
@@ -41,11 +44,8 @@ ggplot(subset(medage_by_perc_women, Census.Year == "2012"),
     panel.background = element_blank(), axis.line = element_line(colour = "black")) + 
   coord_cartesian(ylim=c(20,60))
 
-ggplot(subset(medage_by_perc_women, Census.Year == "2023"),  
-       aes(x = Women, y = Age)) + theme_bw() +
-  geom_point(size =3) + 
-  geom_smooth(method='lm', formula= y~x) + 
-  ggtitle("2023") + 
+ggplot(subset(medage_by_perc_women, Census.Year == "2023"),  aes(x = Women, y = Age)) + theme_bw() +
+  geom_point(size =3) + geom_smooth(method='lm', formula= y~x) + ggtitle("2023") + 
   xlab("% Women in Occupation") + ylab("Median Age") + theme(
     axis.title.x=element_text(size=35),
     axis.title.y=element_text(size=35),
@@ -64,7 +64,7 @@ ggplot(subset(medage_by_perc_women, Census.Year == "2023"),
 ############################
 #Extended Data Figure 2 & 3#
 ############################
-industrylevel<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/industry_match.csv")
+industrylevel<-read.csv(paste(datapath, "industry_match.csv", sep=""))
 
 industrylevel_agg<-industrylevel %>% group_by(Industry, Data.Source, Img.Gender.Mode, sex, year) %>% 
   dplyr::summarise(Img.Age.Avg = mean(Img.Age.Avg), age = mean(age), age_norm = mean(age_norm))
@@ -172,7 +172,6 @@ ggplot(mgmt_plot, aes(x = plot_point, y = reorder(source_year, age_gap), color =
   geom_vline(xintercept = 0) + 
   coord_cartesian(xlim=c(-0.25,0.25))
 
-
 ###Service
 service_plot<-subset(industrylevel_agg_long_delta_plot, Industry == "Service")
 
@@ -254,8 +253,7 @@ ggplot(Resources_plot, aes(x = plot_point, y = reorder(source_year, age_gap), co
 #########
 #Fig. S1#
 #########
-census_whole_pop<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/gender_age_whole_pop.csv")
-
+census_whole_pop<-read.csv(paste(datapath, "gender_age_whole_pop.csv", sep=""))
 census_whole_pop_median<-subset(census_whole_pop, age == "Median age")
 census_whole_pop_median<-census_whole_pop_median %>% dplyr::select(-male_percent, -female_percent)
 census_whole_pop_median_long<-rbind(
@@ -282,7 +280,7 @@ ggplot(census_whole_pop_median_long, aes(x = as.factor(year), y = age, color=gen
 ####################
 #Fig. S2 & Table S2#
 ####################
-dt_gender_workforce<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/dt_gender_workforce.csv")
+dt_gender_workforce<-read.csv(paste(datapath, "dt_gender_workforce.csv", sep=""))
 dt_gender_workforce$age_num<-as.factor(dt_gender_workforce$age)
 levels(dt_gender_workforce$age_num)<-1:length(levels(dt_gender_workforce$age_num))
 dt_gender_workforce$age_num<-as.numeric(as.character(dt_gender_workforce$age_num))
