@@ -5,16 +5,17 @@ rm(list=ls());gc();
 library(dplyr); library(ggplot2); library(tidyverse);
 library(lubridate); library(sjPlot); library(sjmisc)
 library(lmtest); library(sandwich); library(gtsummary)
-library(flextable)
+library(flextable); library(svglite)
 
-#Params
-savepath<-""
+
+datapath<-"" #set path to where data is saved
+savepath<-"" #set path to where you want to save the figures 
 windows()
 
 #########
 #FIG. 4A#
 #########
-dt<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/resumes_main.csv" )
+dt<-read.csv(paste(datapath, "resumes_main.csv", sep=""))
 dt$bday<-mdy(dt$Date.of.Birth)
 dt$gradday<-mdy(dt$Graduation.Date)
 dt$age<-as.numeric((today()-dt$bday)/365)
@@ -84,22 +85,23 @@ plot_main$xmax<-plot_main$Estimate + plot_main$`Std. Error`
 plot_main$y<-factor(plot_main$y, levels=rev(c("Applicant\nAge", "Years since\ngraduation", "Years of\nexperience")))
 
 ggplot(plot_main, aes(x = Estimate, y = y, xmin=xmin, xmax = xmax)) + theme_bw() +
-  geom_point(size=10) + geom_errorbar(width=0.2, linewidth=2) + 
+  geom_point(size=15) + geom_errorbar(width=0.2, linewidth=2) + 
   xlab("Effect of Male Name on Resume Feature") + 
   theme(
-    axis.title.x=element_text(size = 36),
+    axis.title.x=element_text(size = 50),
     axis.title.y=element_blank(),
     plot.title=element_blank(),
-    legend.text=element_text(size=35),
+    legend.text=element_text(size=50),
     legend.title=element_blank(),
     legend.position="top",
     legend.background = element_blank(),
     legend.box.background = element_rect(colour = "black",fill="white", linewidth=1.4),
-    axis.text.x=element_text(size = 36, vjust=0.8),axis.text.y=element_text(size = 36),
+    axis.text.x=element_text(size = 50, vjust=0.8),axis.text.y=element_text(size = 50),
     panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
     panel.background = element_blank(), axis.line = element_line(colour = "black")) + 
   geom_vline(xintercept=0, linetype="dotted", linewidth=2) + 
   coord_cartesian(xlim=c(-0.5, 1.8))
+#ggsave('fig4A.svg', width=18, height=18, path = savepath)
 
 ###############################################
 #Analyse effect of gender on control condition#
@@ -145,7 +147,7 @@ summary(mod_cntrl_grad)
 ##########
 #FIG. 4BC#
 ##########
-scores_dt<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/resume_scores.csv")
+scores_dt<-read.csv(paste(datapath, "resume_scores.csv", sep=""))
 scores_dt$bday<-mdy(scores_dt$Date.of.Birth)
 scores_dt$gradday<-mdy(scores_dt$Graduation.Date)
 scores_dt$age<-as.numeric((today()-scores_dt$bday)/365)
@@ -175,10 +177,11 @@ ggplot(scores_dt_treatment, aes(x = age, y = score)) + theme_bw() +
     legend.position="none",
     legend.background = element_blank(),
     legend.box.background = element_rect(colour = "black",fill="white", linewidth=1.4),
-    axis.text.x=element_text(size = 30, vjust=0.8),axis.text.y=element_text(size = 30),
+    axis.text.x=element_text(size = 35, vjust=0.8),axis.text.y=element_text(size = 35),
     panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
     panel.background = element_blank(), axis.line = element_line(colour = "black")) + 
   coord_cartesian(ylim=c(83,100))
+#ggsave('fig4B.svg', width=9, height=9, path = savepath)
 
 mod<-lm(score ~ Gender + age + Total.Experience + Name + Occupation, data = scores_dt)
 summary(mod)
@@ -194,14 +197,10 @@ summary(mod3)
 #########
 theme_set(theme_sjplot())
 
-plot_model(mod3, type = "int", show.p = TRUE,
-           wrap.title = 100,
-           wrap.labels = 100, 
-           line.size = 5, 
-           grid.breaks = FALSE, 
-           value.size=10) + theme_bw() + 
+plot_model(mod3, type = "int", show.p = TRUE,wrap.title = 100,wrap.labels = 100, 
+           line.size = 5, grid.breaks = FALSE, value.size=10) + theme_bw() + 
   xlab("Applicant Age") + ylab("Resume Score") + 
-  scale_color_manual(values=c("goldenrod", "dodgerblue")) + 
+  scale_color_manual(values=c("orange", "dodgerblue")) + 
   theme(
     axis.title.x=element_text(size=35),
     axis.title.y=element_text(size=35),
@@ -210,9 +209,10 @@ plot_model(mod3, type = "int", show.p = TRUE,
     legend.title=element_blank(),
     legend.position=c(0.2,0.8),
     legend.background = element_blank(),
-    legend.box.background = element_rect(colour = "black",fill="white", linewidth=1.4),
-    axis.text.x=element_text(size = 30, vjust=0.8),axis.text.y=element_text(size = 30),
+    legend.box.background = element_rect(colour = "black",fill="white", linewidth=1),
+    axis.text.x=element_text(size = 35, vjust=0.8),axis.text.y=element_text(size = 35),
     axis.line = element_line(colour = "black"))
+#ggsave('fig4C.svg', width=8.7, height=8.9, path = savepath)
 
 ##################
 ##Supplementary###
@@ -260,7 +260,7 @@ ggplot(dt_clean_supp, aes(x = age, y = Total.Experience)) + theme_bw() +
 ##########
 #FIG. S14#
 ##########
-scores_SI_dt<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/resume_scores_temp_SI.csv")
+scores_SI_dt<-read.csv(paste(datapath, "resume_scores_temp_SI.csv", sep=""))
 scores_SI_dt<-subset(scores_SI_dt, score <= 100)
 scores_SI_dt$config<-paste(scores_SI_dt$prompt, scores_SI_dt$temp, sep="_")
 scores_SI_dt<-subset(scores_SI_dt, Total.Experience>0) #robust to including
@@ -307,6 +307,9 @@ scores_SI_dt_treat_corr_agg_long$correlation<-sapply(1:nrow(scores_SI_dt_treat_c
 scores_SI_dt_treat_corr_agg_long$measure<-as.factor(scores_SI_dt_treat_corr_agg_long$measure)
 levels(scores_SI_dt_treat_corr_agg_long$measure)<-c("pval", "corr")
 scores_SI_dt_treat_corr_agg_long$condition<-paste(scores_SI_dt_treat_corr_agg_long$prompt, scores_SI_dt_treat_corr_agg_long$temp, sep="_")
+
+
+scores_SI_dt_treat %>% group_by(temp) %>% dplyr::summarise(numresumes = length(unique(Resume)))
 
 ###########
 #FIG. S14A#
@@ -412,7 +415,7 @@ ggplot(Figs14_panelB_plot, aes(x = Estimate, y = config, xmin=xmin, xmax = xmax)
 ###################
 #Merge with Census#
 ###################
-census_map<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/census_map.csv")
+census_map<-read.csv(paste(datapath, "census_map.csv", sep=""))
 dt_clean_agg<-dt_clean %>% group_by(Condition, Occupation) %>% dplyr::summarise(age = mean(age, na.rm=T))
 dt_clean_agg$category<-gsub(" ", "",dt_clean_agg$Occupation, fixed = TRUE)
 

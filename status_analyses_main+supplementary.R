@@ -5,10 +5,18 @@ library(lmtest); library(sandwich); library(gtsummary)
 library(flextable); library(reshape2)
 theme_set(theme_sjplot())
 
+getmode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+datapath<-"" #set path to where data is saved
+savepath<-"" #set path to where you want to save the figures 
+
 ################
 #Get Image Data#
 ################
-data_raw<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/gendered_ageism_img/nature_data_obsv.csv")
+data_raw<-read.csv(paste(datapath, "nature_data_obsv.csv", sep=""))
 data_google_main<-subset(data_raw, !searchDEMO %in% c("Male", "Female") & Img.Gender != "Non-binary" & Data.Source == "Google")
 
 data_google_agg<- data_google_main %>% 
@@ -42,7 +50,7 @@ data_google_agg_propmale<-subset(data_google_agg_propgen, Img.Gender.Mode == "Ma
 #########################
 #Load Status Survey Data#
 #########################
-survey<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/gendered_ageism_img/status_survey.csv")
+survey<-read.csv(paste(datapath, "status_survey.csv", sep=""))
 survey_ladder<-subset(survey, construct == "ladder")
 survey_prestige<-subset(survey, construct == "prestige")
 survey_status<-subset(survey, construct == "status")
@@ -115,7 +123,7 @@ mod_composite_full_clust_se <- vcovCL(mod_composite_full, cluster = ~ Social.Cat
 coeftest(mod_composite_full, vcov = mod_composite_full_clust_se)
 
 #Panel C (OPR Ratings: https://occupational-prestige.github.io/opratings/index.html)
-OPR<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/gendered_ageism_img/OPR_prestige_ratings.csv")
+OPR<-read.csv(paste(datapath, "OPR_prestige_ratings.csv", sep=""))
 OPR_full<-merge(data_google_agg_bygen_clean_gap, OPR, by=c("Social.Category"))
 
 #Panel B#
@@ -149,11 +157,10 @@ ggplot(OPR_full_agg, aes(x = score_bins, y = pMaleOlder, ymin = cilow, ymax = ci
   coord_cartesian(ylim=c(0.63, 0.9)) + 
   scale_y_continuous(labels = scales::percent)
 
-
 #######################
 #Panel C (by earnings)#
 #######################
-census_earnings_dt<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/gendered_ageism_img/census_occupation_income_data.csv")
+census_earnings_dt<-read.csv(paste(datapath, "census_occupation_income_data.csv", sep=""))
 data_google_agg_bygen_clean_gap$male_older_binary<-as.numeric(data_google_agg_bygen_clean_gap$male_older)
 income_compare<-merge(data_google_agg_bygen_clean_gap, census_earnings_dt, by=c("Social.Category"))
 income_compare$pay_gap_raw<-income_compare$Avg.Income.M - income_compare$Avg.Income.F

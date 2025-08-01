@@ -1,21 +1,9 @@
-#Replication Script for Study of Gendered Ageism in online images 
-#Douglas R. Guilbeault & Solene Delecourt
-#Haas School of Business
-#University of California, Berkeley
-
 rm(list=ls());gc()
 library(dplyr)
 library(ggplot2)
 library(tidyverse)
 library(irrCAC) #https://search.r-project.org/CRAN/refmans/irrCAC/html/gwet.ac1.raw.html
-
-#library(sjPlot) #https://strengejacke.github.io/sjPlot/articles/tab_mixed.html
-#library(clinfun)
-#library(ggridges);theme_set(theme_ridges())
-#library(jtools) #https://cran.r-project.org/web/packages/jtools/vignettes/summ.html
-#library(lmtest)
-#library(multiwayvcov)
-#library(rms)
+library(svglite)
 
 #functions
 min_max_norm<-function(x){(x - min(x,na.rm=T))/(max(x,na.rm=T) - min(x,na.rm=T))}
@@ -25,12 +13,13 @@ getmode <- function(v) {
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
-savepath<-"G:/My Drive/Research/Labs/COMPSYN/gendered ageism/results/"
+datapath<-"" #set path to where data is saved
+savepath<-"" #set path to where you want to save the figures 
 
 ###########
 #Load Data#
 ###########
-data_raw<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/gendered_ageism_img/nature_data_obsv.csv")
+data_raw<-read.csv(paste(datapath, "nature_data_obsv.csv", sep=""))
 data_neu<-subset(data_raw, !searchDEMO %in% c("Male", "Female") & Data.Source == "Google")
 data_gen<-subset(data_raw, searchDEMO %in% c("Male", "Female")  & Data.Source == "Google")
 data_binary<-subset(data_raw, Img.Gender != "Non-binary")
@@ -65,7 +54,7 @@ data_main_agg_stats<-data_main_agg %>%
 ###############################
 #IMDb Data (IMDb-Wiki Dataset)#
 ###############################
-IMDBceleb<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/gendered_ageism_img/imdb_age_celeb.csv")
+IMDBceleb<-read.csv(paste(datapath, "imdb_age_celeb.csv", sep=""))
 IMDBceleb<-subset(IMDBceleb, gender %in% c(0,1))
 IMDBceleb<-subset(IMDBceleb, age > 0 & age <= 100)
 IMDBceleb$gender_cat<-as.factor(IMDBceleb$gender)
@@ -74,7 +63,7 @@ levels(IMDBceleb$gender_cat)<-c("Female", "Male")
 ####################################
 #Wikipedia Data (IMDb-Wiki Dataset)#
 ####################################
-wikiceleb<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/gendered_ageism_img/wiki_age_celeb.csv")
+wikiceleb<-read.csv(paste(datapath, "wiki_age_celeb.csv", sep=""))
 wikiceleb<-subset(wikiceleb, gender %in% c(0,1))
 wikiceleb<-subset(wikiceleb, age > 0 & age <= 100)
 wikiceleb$gender_cat<-as.factor(wikiceleb$gender)
@@ -83,7 +72,7 @@ levels(wikiceleb$gender_cat)<-c("Female", "Male")
 ############################
 #Google Data (CACD Dataset)#
 ############################
-CADC<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/gendered_ageism_img/CACD.csv")
+CADC<-read.csv(paste(datapath, "CACD.csv", sep=""))
 IMDBceleb_binary<-unique(IMDBceleb %>% select(name, gender))
 CADC_comp<-merge(IMDBceleb_binary, CADC, by=c("name"))
 CADC_comp$gender<-as.factor(CADC_comp$gender)
@@ -92,8 +81,7 @@ levels(CADC_comp$gender)<-c("Female", "Male")
 #####################
 #########LFW#########
 #####################
-
-LFW<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/gendered_ageism_img/lfw.csv")
+LFW<-read.csv(paste(datapath, "lfw.csv", sep=""))
 
 ##############
 #Main Results#
@@ -108,8 +96,7 @@ google_main_agg<-subset(data_main_agg, Data.Source=="Google")
 google_main_agg$Img.Gender.Mode<-as.factor(google_main_agg$Img.Gender.Mode)
 google_main_agg_stats<-subset(data_main_agg_stats, Data.Source=="Google")
 
-google_ungendered<-ggplot(google_main_agg, 
-                          aes(x = Img.Age.Avg, group=Img.Gender.Mode)) + 
+google_ungendered<-ggplot(google_main_agg, aes(x = Img.Age.Avg, group=Img.Gender.Mode)) + 
   theme_bw() + geom_density(lwd = 3, colour = "black", alpha=0.7, bw = 0.38, aes(fill=Img.Gender.Mode)) +
   scale_fill_manual(values=c("orange", "dodgerblue")) + 
   xlab("Age of Face") + ggtitle("Google\n(Guilbeault et al. 2024)") + 
@@ -133,11 +120,7 @@ google_ungendered<-ggplot(google_main_agg,
   geom_vline(xintercept = subset(google_main_agg_stats, Img.Gender.Mode=="Male")$Avg.Img.Age.Num, color="dodgerblue", linewidth=6) 
 
 print(google_ungendered)
-ggsave('Google_ungendered_searches.png', width=15, height=15, path = savepath)
-
-pdf(file = paste0(savepath, 'Google_ungendered_searches.pdf'), width = 15, height = 15, useDingbats = FALSE)
-print(google_ungendered)
-dev.off()
+ggsave('fig1A.svg', width=15, height=15, path = savepath)
 
 #Fig 1A Stats#
 t.test(subset(google_main_agg, Img.Gender.Mode=="Female")$Img.Age.Avg, 
@@ -183,16 +166,11 @@ google_gendered<-ggplot(google_gendered_agg, aes(x = Img.Age.Avg, fill=Img.Gende
                      breaks=c(2,3,4,5,6),
                      labels=c("12-17","18-24","25-34","35-54","55-74")) + 
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
-  #coord_cartesian(ylim=c(0,0.45)) + 
   geom_vline(xintercept = subset(google_gendered_agg_stats, Img.Gender.Mode=="Female")$Avg.Img.Age.Num, color="orange", linewidth=6) + 
   geom_vline(xintercept = subset(google_gendered_agg_stats, Img.Gender.Mode=="Male")$Avg.Img.Age.Num, color="dodgerblue", linewidth=6) 
 
 print(google_gendered)
-ggsave('Google_gendered_searches.png', width=15, height=15, path = savepath)
-
-pdf(file = paste0(savepath, 'Google_gendered_searches.pdf'), width = 15, height = 15, useDingbats = FALSE)
-print(google_gendered)
-dev.off()
+ggsave('fig1B.svg', width=15, height=15, path = savepath)
 
 #Fig. 1B Stats#
 t.test(subset(google_gendered_agg, Img.Gender.Mode=="Female")$Img.Age.Avg, 
@@ -209,12 +187,8 @@ google_gendered_agg_cat_match<-google_gendered_agg_cat_match[complete.cases(goog
 t.test(google_gendered_agg_cat_match$fem.age.avg, 
        google_gendered_agg_cat_match$mal.age.avg,paired=T)
 
-length(unique(google_gendered$face_id))
-length(unique(google_gendered_agg_cat_match$Social.Category))
-
 #Fig. 1C#
 wiki_dt<-subset(data_raw, Data.Source == "Wikipedia")
-
 wiki_main_agg<-subset(data_main_agg, Data.Source=="Wikipedia")
 wiki_main_agg_stats<-subset(data_main_agg_stats, Data.Source=="Wikipedia")
 
@@ -242,11 +216,7 @@ wiki_2021<-ggplot(wiki_main_agg, aes(x = Img.Age.Avg, fill=Img.Gender.Mode, colo
   geom_vline(xintercept = subset(wiki_main_agg_stats, Img.Gender.Mode=="Male")$Avg.Img.Age.Num, color="dodgerblue", linewidth=6) 
 
 print(wiki_2021)
-ggsave('wiki_2021.png', width=15, height=15, path = savepath)
-
-pdf(file = paste0(savepath, 'wiki_2021.pdf'), width = 15, height = 15, useDingbats = FALSE)
-print(wiki_2021)
-dev.off()
+ggsave('fig1C.svg', width=15, height=15, path = savepath)
 
 #Fig 1C Stats#
 t.test(subset(wiki_main_agg, Img.Gender.Mode=="Female")$Img.Age.Avg, 
@@ -262,14 +232,9 @@ wiki_main_cat_match<-wiki_main_agg %>% group_by(Social.Category) %>%
 wiki_main_cat_match<-wiki_main_cat_match[complete.cases(wiki_main_cat_match),]
 t.test(wiki_main_cat_match$fem.age.avg, wiki_main_cat_match$mal.age.avg,paired=T)
 
-#################################################
-##Replication with Ground-truth Classifications##
-##################Figure 1#######################
-#################################################
-
 #Fig. 1D#
 IMDb_Rothe<-ggplot(IMDBceleb, aes(x = age, fill=gender_cat, alpha=gender_cat)) +
-  theme_bw() + geom_density(lwd = 3, colour = "black", alpha = 0.7, bw = 0.38, adjust=2) +
+  theme_bw() + geom_density(linewidth = 3, colour = "black", alpha = 0.7, bw = 0.38, adjust=2) +
   scale_fill_manual(values=c("orange", "dodgerblue")) + 
   xlab("Age of Face") + ggtitle("IMDb\n(Rothe et al. 2018)") +
   theme(legend.text=element_text(size=60),
@@ -289,11 +254,7 @@ IMDb_Rothe<-ggplot(IMDBceleb, aes(x = age, fill=gender_cat, alpha=gender_cat)) +
   geom_vline(xintercept = mean(subset(IMDBceleb, gender_cat=="Male")$age, na.rm=T), color="blue", size=6)
 
 print(IMDb_Rothe)
-ggsave('IMDb_Rothe.png', width=15, height=15, path = savepath)
-
-pdf(file = paste0(savepath, 'IMDb_Rothe.pdf'), width = 15, height = 15, useDingbats = FALSE)
-print(IMDb_Rothe)
-dev.off()
+ggsave('fig1D.svg', width=15, height=14.7, path = savepath)
 
 imdb_female=subset(IMDBceleb, gender==0)
 imdb_male=subset(IMDBceleb, gender==1)
@@ -321,11 +282,7 @@ wiki_Rothe<-ggplot(wikiceleb, aes(x = age, fill=gender_cat, alpha=gender_cat)) +
   geom_vline(xintercept = mean(subset(wikiceleb, gender_cat=="Male")$age, na.rm=T), color="blue", size=6)
 
 print(wiki_Rothe)
-ggsave('wiki_Rothe.png', width=15, height=15, path = savepath)
-
-pdf(file = paste0(savepath, 'wiki_Rothe.pdf'), width = 15, height = 15, useDingbats = FALSE)
-print(wiki_Rothe)
-dev.off()
+ggsave('fig1E.svg', width=15, height=14.7, path = savepath)
 
 wiki_female=subset(wikiceleb, gender==0)
 wiki_male=subset(wikiceleb, gender==1)
@@ -353,17 +310,78 @@ CADC_fig<-ggplot(CADC_comp, aes(x = age, fill=gender, alpha=gender)) +
   geom_vline(xintercept = mean(subset(CADC_comp, gender=="Male")$age, na.rm=T), color="blue", size=6)
 
 print(CADC_fig)
-ggsave('CADC.png', width=15, height=15, path = savepath)
-
-pdf(file = paste0(savepath, 'CADC.pdf'), width = 15, height = 15, useDingbats = FALSE)
-print(CADC_fig)
-dev.off()
+ggsave('fig1F.svg', width=14.6, height=15, path = savepath)
 
 t.test(subset(CADC_comp, gender=="Female")$age, 
        subset(CADC_comp, gender=="Male")$age)
 
-###LFW 
+#Fig. 1G#
+utk<-read.csv(paste(datapath, "utk.csv", sep=""))
+utk$gender<-factor(utk$gender, levels=c("Female", "Male"))
+utk_stats<-utk %>% group_by(gender) %>% dplyr::summarise(age=mean(age, na.rm=T))
 
+utk_plot<-ggplot(utk, aes(x = age, fill=gender, color=gender, group=gender)) + 
+  theme_bw() + geom_density(linewidth = 3, colour = "black", alpha = 0.7, bw = 0.38, adjust=3) +
+  scale_fill_manual(values=c("orange", "dodgerblue")) + 
+  xlab("Age of Face") + ggtitle("UTK\n(2017)") + 
+  theme(legend.text=element_text(size=60),
+        legend.position=c(0.85,0.88),
+        legend.title = element_blank(),
+        plot.title=element_text(size = 60, hjust = 0.5),
+        axis.title.y=element_blank(),
+        axis.title.x=element_text(size = 60, hjust = 0.5),
+        axis.text.x=element_text(size = 60, hjust = 0.5, angle=28, vjust=0.7),
+        axis.text.y=element_text(size = 60, hjust = 0.5),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+        axis.ticks = element_line(size = 3), 
+        axis.ticks.length = unit(0.3, "cm")) + 
+  scale_x_continuous(limits=c(-2,92), breaks=c(0,10,20,30,40,50,60,70,80,90)) + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  geom_vline(xintercept = subset(utk_stats, gender=="Female")$age, color="orange", size=5) + 
+  geom_vline(xintercept = subset(utk_stats, gender=="Male")$age, color="dodgerblue", size=5) 
+
+print(utk_plot)
+ggsave('fig1G.svg', width=14.6, height=15, path = savepath)
+
+t.test(subset(utk, gender=="Female")$age, 
+       subset(utk, gender=="Male")$age)
+
+#Fig. 1H#
+adience<-read.csv(paste(datapath, "adience.csv", sep=""))
+adience$gender<-as.factor(adience$gender)
+levels(adience$gender)<-c("Female", "Male")
+
+adience_stats<-adience %>% group_by(gender) %>% dplyr::summarise(age=mean(age_num, na.rm=T))
+
+adience_plot<-ggplot(adience, aes(x = age_num, fill=gender, color=gender, group=gender)) + 
+  theme_bw() + geom_density(lwd = 3, colour = "black", alpha = 0.7, bw = 0.38) +
+  scale_fill_manual(values=c("orange", "dodgerblue")) + 
+  xlab("Age of Face") + ggtitle("Flickr\n(2014)") + 
+  theme(legend.text=element_text(size=60),
+        legend.position=c(0.85,0.88),
+        legend.title = element_blank(),
+        plot.title=element_text(size = 60, hjust = 0.5),
+        axis.title.y=element_blank(),
+        axis.title.x=element_text(size = 60, hjust = 0.5),
+        axis.text.x=element_text(size = 60, hjust = 0.5, angle=28, vjust=0.7),
+        axis.text.y=element_text(size = 60, hjust = 0.5),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+        axis.ticks = element_line(size = 3), 
+        axis.ticks.length = unit(0.3, "cm")) + 
+  scale_x_continuous(limits=c(0,9), 
+                     breaks=c(1,2,3,4,5,6,7,8),
+                     labels=c("0-2", "4-6", "8-12", "15-20", "25-32", "38-48", "48-53", "60-100")) + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  geom_vline(xintercept = subset(adience_stats, gender=="Female")$age, color="orange", size=5) + 
+  geom_vline(xintercept = subset(adience_stats, gender=="Male")$age, color="dodgerblue", size=5) 
+
+print(adience_plot)
+ggsave('fig1H.svg', width=15, height=15.8, path = savepath)
+
+t.test(subset(adience, gender=="Female")$age_num, 
+       subset(adience, gender=="Male")$age_num)
+
+###Fig. 1I 
 LFW_fig<-ggplot(LFW, aes(x = age_bin, fill=gender, color=gender, group=gender)) + 
   theme_bw() + geom_density(lwd = 3, colour = "black", alpha = 0.7, bw = 0.38, adjust=2) +
   scale_fill_manual(values=c("orange", "dodgerblue")) + 
@@ -385,21 +403,46 @@ LFW_fig<-ggplot(LFW, aes(x = age_bin, fill=gender, color=gender, group=gender)) 
   geom_vline(xintercept = mean(subset(LFW, gender=="Male")$age_bin, na.rm=T), color="blue", size=6)
 
 print(LFW_fig)
-ggsave('LFW.png', width=15, height=15, path = savepath)
-
-pdf(file = paste0(savepath, 'LFW.pdf'), width = 15, height = 15, useDingbats = FALSE)
-print(LFW_fig)
-dev.off()
+ggsave('fig1I.svg', width=15.3, height=15.55, path = savepath)
 
 cor.test(LFW$male, LFW$age_bin)
-
 t.test(subset(LFW, !male_cat)$age_bin, subset(LFW, male_cat)$age_bin)
+
+###Fig. 1J
+ytdb<-read.csv(paste(datapath, "yfdb_impute.csv", sep=""))
+yfdb_plot<-ggplot(ytdb, aes(x = age_bin, fill=gender_mode, color=gender_mode, group=gender_mode)) + 
+  theme_bw() + geom_density(lwd = 3, colour = "black", alpha = 0.7, bw = 0.38) +
+  scale_fill_manual(values=c("orange", "dodgerblue")) + 
+  xlab("Age of Face") + ggtitle("Youtube\n(2011)") + 
+  theme(legend.text=element_text(size=60),
+        legend.position=c(0.85,0.88),
+        legend.title = element_blank(),
+        plot.title=element_text(size = 60, hjust = 0.5),
+        axis.title.y=element_blank(),
+        axis.title.x=element_text(size = 60, hjust = 0.5),
+        axis.text.x=element_text(size = 60, hjust = 0.5, angle=28, vjust=0.7),
+        axis.text.y=element_text(size = 60, hjust = 0.5),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+        axis.ticks = element_line(size = 3), 
+        axis.ticks.length = unit(0.3, "cm")) + 
+  scale_x_continuous(limits=c(0.8,6.2), 
+                     breaks=c(1,2,3,4,5),
+                     labels=c("baby", "child", "teen", "adult", "senior")) + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  geom_vline(xintercept = mean(subset(ytdb, gender_mode=="Female")$age_bin), color="orange", size=5) + 
+  geom_vline(xintercept = mean(subset(ytdb, gender_mode=="Male")$age_bin), color="dodgerblue", size=5)
+
+print(yfdb_plot)
+ggsave('fig1J.svg', width=15.4, height=15.6, path = savepath)
+
+t.test(subset(ytdb, gender_mode=="Female")$age_bin, 
+       subset(ytdb, gender_mode == "Male")$age_bin)
 
 ################
 #IP Replication#
 ####Figure 2####
 ################
-IP_data<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/gendered_ageism_img/nature_data_supp/GEO_replication.csv")
+IP_data<-read.csv(paste(datapath, "GEO_replication.csv", sep=""))
 IP_simp<-subset(IP_data, gender %in% c("Male", "Female"))
 IP_data_clean<-subset(IP_data, Attention.Check & gender %in% c("Male","Female") & humface=="Yes")
 IP_data_clean$Img.Age<-as.factor(IP_data_clean$age)
@@ -603,5 +646,42 @@ dt_age_rater_gewt<-gwet.ac1.raw(rand_sub)
 dt_age_rater_gewt$est
 
 #write code that iterates over and calculates intercoder reliability across many samples 
+
+###############################
+#Robustness to age connotation#
+###############################
+age_coded<-read.csv(paste(datapath, "age_category_map_classified.csv", sep=""))
+age_coded<-age_coded[,c(1,3)]
+google_main_agg_m<-merge(google_main_agg, age_coded, by=c("Social.Category"))
+google_main_agg_m_robust<-subset(google_main_agg_m, age_implied>=0)
+
+google_ungendered_robust<-ggplot(google_main_agg_m_robust, aes(x = Img.Age.Avg, group=Img.Gender.Mode)) + 
+  theme_bw() + geom_density(lwd = 3, colour = "black", alpha=0.7, bw = 0.38, aes(fill=Img.Gender.Mode)) +
+  scale_fill_manual(values=c("orange", "dodgerblue")) + 
+  xlab("Age of Face") + ggtitle("Google\nCategories Without Age Connotation") + 
+  theme(legend.text=element_text(size=60),
+        legend.position=c(0.85,0.88),
+        legend.title = element_blank(),
+        plot.title=element_text(size = 50, hjust = 0.5),
+        axis.title.y=element_blank(),
+        axis.title.x=element_text(size = 50, hjust = 0.5),
+        axis.text.x=element_text(size = 50, hjust = 0.5, angle=28, vjust=0.7),
+        axis.text.y=element_text(size = 50, hjust = 0.5),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+        axis.ticks = element_line(linewidth = 3), 
+        axis.ticks.length = unit(0.3, "cm")) + 
+  scale_x_continuous(limits=c(0,8), 
+                     breaks=c(1,2,3,4,5,6,7),
+                     labels=c("0-11", "12-17","18-24","25-34","35-54","55-74","+75")) + 
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
+  coord_cartesian(ylim=c(0,0.45)) +
+  geom_vline(xintercept = mean(subset(google_main_agg_m_robust, Img.Gender.Mode=="Female")$Img.Age.Avg), color="orange", linewidth=6) + 
+  geom_vline(xintercept = mean(subset(google_main_agg_m_robust, Img.Gender.Mode=="Male")$Img.Age.Avg), color="dodgerblue", linewidth=6) 
+
+print(google_ungendered_robust)
+ggsave('Google_ungendered_searches_AgeRobust.png', width=15, height=15, path = savepath)
+t.test(subset(google_main_agg_m_robust, Img.Gender.Mode == "Female")$Img.Age.Avg, 
+       subset(google_main_agg_m_robust, Img.Gender.Mode == "Male")$Img.Age.Avg)
+
 
 

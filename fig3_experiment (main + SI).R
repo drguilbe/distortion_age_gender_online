@@ -3,19 +3,22 @@
 ###############
 rm(list=ls());gc()
 library(dplyr);library(ggplot2);library(tidyverse);library(tidyr)
-library(multiwayvcov);library(lmtest); library(emmeans)
-library(broom); library(gtsummary); library(flextable)
+library(multiwayvcov);library(lmtest); library(emmeans); library(svglite)
+library(broom); library(gtsummary); library(flextable); 
+
+datapath<-"" #set path to where data is saved
+savepath<-"" #set path to where you want to save the figures 
 
 #Functions
 min_max_norm<-function(x){(x - min(x,na.rm=T))/(max(x,na.rm=T) - min(x,na.rm=T))}
 
 #Load data
-control<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/experiment_control.csv")
+control<-read.csv(paste(datapath, "experiment_control.csv", sep=""))
 control$gender_cond<-"control"
 control_agg<-control %>% group_by(category) %>% dplyr::summarise(age=mean(age), ideal_age=mean(ideal_age))
 colnames(control_agg)<-c("category","c_age", "c_ideal")
 
-treatment<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/experiment_treatment.csv")
+treatment<-read.csv(paste(datapath, "experiment_treatment.csv", sep=""))
 treatment$gender_cond<-treatment$gender
 treatment$ideal_age<-"NA"
 treatment_agg<-treatment %>% group_by(category, gender) %>% dplyr::summarise(age=mean(age))
@@ -46,21 +49,12 @@ treatment$gender_num<-as.numeric(as.character(treatment$gender_num))
 dt_main<-rbind(treatment, control)
 
 ######################
-######################
 #####MAIN RESULTS#####
 ######################
-######################
-
-###########
-#Visualize#
-###########
-savepath = ""
 
 #########
 #Fig. 3A#
 #########
-
-#pdf(file = paste0(savepath, 'main_diff_final.pdf'), width = 11, height = 9.8, useDingbats = FALSE)
 ggplot(treatment_full_main, aes(x = age_cent, fill=gender)) +
   geom_density(alpha=0.6, size=1.2) + theme_bw() + 
   scale_fill_manual(values=c("orange", "dodgerblue")) + 
@@ -81,8 +75,7 @@ ggplot(treatment_full_main, aes(x = age_cent, fill=gender)) +
   geom_vline(xintercept = mean(subset(treatment_full_main, gender=="Male")$age_cent, na.rm=T), 
              linetype="solid", linewidth=2, color="dodgerblue") + 
   guides(fill = guide_legend(title = "Image Uploaded"))
-#dev.off()
-#ggsave('main_result_age_vs_control.png', width=11, height=11, path = savepath)
+ggsave('fig3A.svg', width=11, height=11, path = savepath)
 
 t.test(subset(treatment_full_main, gender == "Female")$age_cent)
 t.test(subset(treatment_full_main, gender == "Male")$age_cent)
@@ -114,7 +107,6 @@ emm_interaction <- emmeans(dt_mod, specs = pairwise ~ condition * gender, rg.lim
 emm_interaction_df <- data.frame(emm_interaction$emmeans)
 emm_interaction_df$gender<-factor(emm_interaction_df$gender, levels=c("Male", "Female"))
 
-#pdf(file = paste0(savepath, 'interaction_effect_plot.pdf'), width = 11, height = 11, useDingbats = FALSE)
 ggplot(emm_interaction_df, aes(x = condition, y = emmean, color = gender, group = gender)) +
   geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2, size=3) +
   scale_color_manual(values=c("dodgerblue", "orange"))+ 
@@ -134,14 +126,14 @@ ggplot(emm_interaction_df, aes(x = condition, y = emmean, color = gender, group 
         legend.box.background = element_rect(colour = "black"),
         legend.background = element_blank(), 
         plot.title = element_text(size=40, hjust=0.5))
-#dev.off()
+ggsave('fig3B.svg', width=11, height=12.2, path = savepath)
 
 #########
 #FIG. 3C#
 #########
 
 #Load other experimental data (from Guilbeault et al. 2024 in Nature, "Online Images Amplify Gender Bias")
-nature_exp<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/experiment_Guilbeaultetal2024.csv")
+nature_exp<-read.csv(paste(datapath, "experiment_Guilbeaultetal2024.csv", sep=""))
 nature_exp_cntrl<-subset(nature_exp, condition == "Control")
 nature_exp_cntrl_agg<-nature_exp_cntrl %>% group_by(category) %>% 
   dplyr::summarise(gender.rate=mean(gender.rate), str_stereo = mean(str_stereo))
@@ -175,11 +167,13 @@ hireability_comp_fig<-
   )
 
 hireability_comp_fig_main<-subset(hireability_comp_fig, measure %in% c("Uploads.Exp1.Image", "Ratings.Exp1.Control"))
+hireability_comp_fig_main$measure<-as.factor(hireability_comp_fig_main$measure)
+levels(hireability_comp_fig_main$measure)<-c("Gender Ratings (Control Condition)", "Image Uploads (Image Condition)")
 
-#pdf(file = paste0(savepath, 'ideal_age_by_gender_comp_MAIN.pdf'), width = 11, height = 11, useDingbats = FALSE)
-ggplot(hireability_comp_fig_main, aes(x=gender, y=ideal_age, color=measure, fill=measure))+
-  geom_point(size=8, alpha=0.4) + 
+ggplot(hireability_comp_fig_main, aes(x=gender, y=ideal_age, color=measure, fill=measure, linetype=measure))+
+  geom_point(size=8, alpha=0.6) + 
   geom_smooth(linewidth=3, method='lm', formula= y~x, se=T, alpha=0.3) + 
+  scale_color_manual(values = c("#CC79A7", "#009E73")) + 
   xlab("Gender Associations") + 
   ylab("Perceived Ideal Hiring Age") + theme_bw() + 
   theme(axis.text.x = element_text(size=40), 
@@ -187,7 +181,7 @@ ggplot(hireability_comp_fig_main, aes(x=gender, y=ideal_age, color=measure, fill
         axis.title.x = element_text(size=40),
         axis.title.y = element_text(size=40),
         legend.position = "top", 
-        legend.text=element_text(size=30),
+        legend.text=element_text(size=40),
         legend.title=element_blank(),
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
@@ -199,8 +193,7 @@ ggplot(hireability_comp_fig_main, aes(x=gender, y=ideal_age, color=measure, fill
   scale_y_continuous(breaks=c(20,25,30,35,40,45)) + 
   scale_x_continuous(limits = c(-1.05,1.05)) + 
   guides(color = guide_legend(nrow = 3, byrow = TRUE), fill = guide_legend(nrow = 3, byrow = TRUE))
-#dev.off()
-#ggsave("ideal_age_by_gender_comp.png", width=12, height=12, path = savepath)
+ggsave('fig3C.svg', width=11, height=12.75, path = savepath)
 
 cor.test(subset(hireability_comp_fig, measure=="Ratings.Exp1.Control")$gender, 
          subset(hireability_comp_fig, measure=="Ratings.Exp1.Control")$ideal_age)
@@ -221,7 +214,7 @@ cor.test(subset(hireability_comp_fig, measure=="Uploads.Exp2.Image")$gender,
 colnames(dt_main)[1]<-"Participant.id"
 
 #Load subject demographics 
-demo<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/experiment_demo.csv")
+demo<-read.csv(paste(datapath, "experiment_demo.csv", sep=""))
 dt_full<-merge(dt_main, demo, by=c("Participant.id"))
 dt_full$Subj.Age<-as.numeric(dt_full$Subj.Age)
 
@@ -290,7 +283,7 @@ ggplot(hireability_comp_fig, aes(x=gender, y=ideal_age, color=measure, fill=meas
 ##########
 #FIG. S18#
 ##########
-hire_likert<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/hire_likert.csv")
+hire_likert<-read.csv(paste(datapath, "hire_likert.csv", sep=""))
 treatment_likert<-merge(treatment, hire_likert, by=c("subj", "category"))
 treatment_likert<-subset(treatment_likert, gender != "Not Sure")
 treatment_likert<-treatment_likert %>% group_by(category) %>% dplyr::mutate(age_norm=min_max_norm(age))
@@ -320,7 +313,7 @@ ggplot(treatment_likert, aes(x = age_norm, y = hire_num, color =  gender))+ them
 #Merge/Compare with Census#
 ###########################
 ###########################
-census_map<-read.csv("G:/My Drive/Research/Labs/COMPSYN/gendered ageism/data/nature_submit/census_map.csv")
+census_map<-read.csv(paste(datapath, "census_map.csv", sep=""))
 census_map_full<-merge(control, census_map, by=c("category"))
 
 census_map_full_long<-rbind(
