@@ -1,4 +1,4 @@
-# Distortion of Age and Gender in Online Media and Artificial Intelligence
+# Age and Gender Distortion in Online Media and Large Language Models
 
 This github contains all of the replication materials for Guilbeault, Delecourt, and Desikan 2025, "Age and Gender Distortion in Online Media and Large Language Models"
 
